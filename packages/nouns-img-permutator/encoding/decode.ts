@@ -33,6 +33,7 @@ const OUTPUT_FILE = 'random-noun.svg';
 const decodeImage = (image: string): DecodedImage => {
   const data = image.replace(/^0x/, '');
   const paletteIndex = parseInt(data.substring(0, 2), 16);
+  console.log(data);
   const bounds = {
     top: parseInt(data.substring(2, 4), 16),
     right: parseInt(data.substring(4, 6), 16),
@@ -56,9 +57,9 @@ const getRandomNoun = async () => {
   const fileJSON = await fs.readFile('encoded-layers.json', 'utf8');
   const data: EncodedData = JSON.parse(fileJSON);
 
-  const [bodies, accessories, heads, glasses] = data.parts;
+  const [stabber] = data.parts;
   const backgroundColor = getRandom(data.bgcolors);
-  const parts = [getRandom(bodies), getRandom(accessories), getRandom(heads), getRandom(glasses)];
+  const parts = stabber;
 
   const svgWithoutEndTag = parts.reduce((result, part) => {
     const svgRects: string[] = [];
@@ -90,7 +91,7 @@ const getRandomNoun = async () => {
     });
     result += svgRects.join('');
     return result;
-  }, `<svg width="320" height="320" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#${backgroundColor}" />`);
+  }, `<svg width="620" height="620" viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#${backgroundColor}" />`);
 
   return `${svgWithoutEndTag}</svg>`;
 };

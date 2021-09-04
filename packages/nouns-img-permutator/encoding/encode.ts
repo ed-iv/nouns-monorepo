@@ -34,7 +34,7 @@ interface Line {
 
 type Lines = { [number: number]: Line };
 
-const LAYER_COUNT = 4;
+const LAYER_COUNT = 1;
 const OUTPUT_FILE = 'encoded-layers.json';
 
 const toPaddedHex = (c: number, pad = 2) => {
@@ -45,7 +45,8 @@ const rgbToHex = (r: number, g: number, b: number) => {
   return `${toPaddedHex(r)}${toPaddedHex(g)}${toPaddedHex(b)}`;
 };
 
-const getFolder = (i: number) => path.join(__dirname, `../assets/layer-${i}`);
+// const getFolder = (i: number) => path.join(__dirname, `../assets/layer-${i}`);
+const getFolder = (i: number) => path.join(__dirname, `../assets/stabby`);
 
 const getImageBackgroundColor = async (folder: string, file: string) => {
   const image = await readPngFile(path.join(folder, file));
@@ -92,11 +93,11 @@ const addPixelToRect = (color: ColorRGBA, lines: Lines, y: number) => {
 // prettier-ignore
 const updateBounds = (bounds: ImageBounds, lines: Lines, y: number) => {
   const { rects } = lines[y];
-    if (!(rects[0].length === 32 && rects[0].colorIndex === 0) && bounds.top === 0) {
+    if (!(rects[0].length === 60 && rects[0].colorIndex === 0) && bounds.top === 0) {
       bounds.top = y === 0 ? y : y - 1; // shift top bound to `y - 1` if > 0
     }
     if (bounds.top !== 0) {
-      if ((rects[0].length === 32 && rects[0].colorIndex === 0) || y === 31) {
+      if ((rects[0].length === 60 && rects[0].colorIndex === 0) || y === 59) {
         if (bounds.bottom === 0) {
           bounds.bottom = y; // Set bottom bound to `y`
         }
@@ -106,7 +107,7 @@ const updateBounds = (bounds: ImageBounds, lines: Lines, y: number) => {
     }
     lines[y].bounds = {
       left: rects[0].length,
-      right: 32 - rects[rects.length - 1].length,
+      right: 60 - rects[rects.length - 1].length,
     };
 };
 
@@ -125,7 +126,7 @@ const getEncodedImage = async (folder: string, file: string) => {
   for (let i = 0; i < bounds.top; i++) {
     delete lines[i]; // Delete all rows above the top bound
   }
-  for (let i = 31; i > bounds.bottom; i--) {
+  for (let i = 59; i > bounds.bottom; i--) {
     delete lines[i]; // Delete all rows below the bottom bound
   }
 
@@ -157,9 +158,9 @@ const getEncodedImage = async (folder: string, file: string) => {
 
         // Set right bound
         if (i === line.rects.length - 1) {
-          if (length > 32 - bounds.right) {
-            return [length - (32 - bounds.right), colorIndex];
-          } else if (length === 32 - bounds.right) {
+          if (length > 60 - bounds.right) {
+            return [length - (60 - bounds.right), colorIndex];
+          } else if (length === 60 - bounds.right) {
             return [];
           }
         }
